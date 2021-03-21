@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="68b82e68-3541-4a7d-a3ff-883c2eb44141" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="b0949b30-5486-41e2-b136-ad0fd44720bc" >
+		<http:request-connection host="spring-boot-h2-crud.herokuapp.com" />
+	</http:request-config>
+	<flow name="12-cloud-deploy-flow" doc:id="49f76f15-eb44-4c8d-a802-9fb1ba054ad5" >
+		<http:listener doc:name="Rest API Consumer" doc:id="0426bdc9-856a-48ef-a4ba-2c3cbe6eb59f" config-ref="HTTP_Listener_config" path="/employees" allowedMethods="GET" />
+		<logger level="INFO" doc:name="Logger" doc:id="2e9917be-7411-4677-973d-b56d4ac2eb56" message="*** Invoking rest api from spring boot h2 CRUD" />
+		<http:request method="GET" doc:name="REST API Request" doc:id="1df4e89d-83e0-4259-b627-e24a31b748ad" config-ref="HTTP_Request_configuration" path="/employees" />
+		<logger level="INFO" doc:name="Logger" doc:id="72cc1638-0059-4ff7-a9e8-0e4b179e0cdb" message="*** API invoked successfully ***"/>
+		<logger level="INFO" doc:name="Logger" doc:id="5c60abf1-7000-44a8-84ab-3f47691c6115" message="#[payload]" />
+	</flow>
+	<flow name="12-cloud-deploy-by-id-flow" doc:id="51a3fba2-f6d5-4362-9b7f-bade8bbfa0c3" >
+		<http:listener doc:name="Rest API Consumer" doc:id="ec37b846-826a-4445-8611-0c728289f9e8" config-ref="HTTP_Listener_config" path="/employees/{id}" allowedMethods="GET" />
+		<set-variable value="#[attributes.uriParams.id]" doc:name="Set Variable" doc:id="1bb9b623-c4cb-4481-9e66-5f6dd02be1ee" variableName="id"/>
+		<logger level="INFO" doc:name="Logger" doc:id="88f88f72-d995-40e3-9478-a8dc038a4ee3" message="#[vars.id]" />
+		<http:request method="GET" doc:name="REST API Request find by id" doc:id="71b46a68-a228-4d14-91ad-d73fc734ff9f" config-ref="HTTP_Request_configuration" path='#["/employees/" ++ vars.id]' >
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"id" : vars.id
+}]]]></http:uri-params>
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="c8c1acaf-964e-4257-8fbd-dd9d79140c93" message="*** API invoked successfully ***" />
+		<logger level="INFO" doc:name="Logger" doc:id="3811d7aa-eae3-4e18-96ba-9eceff1b9b32" message="#[payload]" />
+	</flow>
+</mule>

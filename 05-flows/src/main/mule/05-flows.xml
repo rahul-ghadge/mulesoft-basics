@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="9d4be02b-afdd-4a0d-ba14-55622968290c" >
+		<http:listener-connection host="0.0.0.0" port="8085" />
+	</http:listener-config>
+	<flow name="MainFlow" doc:id="a3db9e87-edf1-49cf-9917-a79b51b1fdc2" >
+		<http:listener doc:name="Main Flow Listener" doc:id="d3ae59e3-196d-4c68-8492-fada84ee3269" config-ref="HTTP_Listener_config" path="/"/>
+		<set-variable value="10" doc:name="Set Variable" doc:id="3fc0786b-895d-426f-9896-5a647a374605" variableName="var1"/>
+		<logger level="INFO" doc:name="Main Flow Logger" doc:id="182a24da-24b6-476b-8242-f416ca43bbee" message="#[vars.var1]"/>
+		<flow-ref doc:name="Main Flow Reference" doc:id="caa3de81-b206-4834-9d30-67d07421fc01" name="PrivateFlow"/>
+		<logger level="INFO" doc:name="Final Logger" doc:id="a5856d79-e2bb-4c90-9bed-ca8ea10faa30" message="#[vars.var1]"/>
+	</flow>
+	<flow name="PrivateFlow" doc:id="4bc0f933-9089-4c95-adac-cc68f4b0cd4e" >
+		<logger level="INFO" doc:name="Logger" doc:id="074ac53a-cbce-49c5-ba88-5defbef42ebe" message="**** Private flow invoked ****"/>
+		<set-variable value="#[20]" doc:name="Set Variable" doc:id="681ec7e4-027f-4792-9c9d-12d05c02a856" variableName="var1"/>
+		<flow-ref doc:name="Private Flow Reference" doc:id="ed608ea3-8323-4449-bb74-89c715c97edb" name="SubFlow"/>
+	</flow>
+	<sub-flow name="SubFlow" doc:id="94011b6f-1407-4e09-a0e3-f05e4cbeeb3e" >
+		<logger level="INFO" doc:name="SubFlowLogger" doc:id="6d0c45d3-2a73-4bb1-a87a-2a09459d9a2c" message="**** Sub Flow invoked ****"/>
+		<set-variable value="30" doc:name="Set Variable" doc:id="adfff0fa-2abc-4145-a9bd-03d5d14e5b2e" variableName="var1"/>
+	</sub-flow>
+</mule>

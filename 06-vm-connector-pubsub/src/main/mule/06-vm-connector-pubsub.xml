@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="eda979f3-aa15-4d0e-8d1b-b7eb59b7d7d6" >
+		<http:listener-connection host="0.0.0.0" port="8086" />
+	</http:listener-config>
+	<vm:config name="VM_Config_PubSub" doc:name="VM Config" doc:id="3e479a3c-821f-4a6c-a7c8-892f702f8751" >
+		<vm:queues >
+			<vm:queue queueName="superhero_queue" />
+		</vm:queues>
+	</vm:config>
+	<flow name="06-vm-connector-pubsubFlow" doc:id="b90289be-340d-4454-a0c3-5ad39d8a2e32" >
+		<http:listener doc:name="Listener" doc:id="7f789b5b-d95f-4331-82c6-d32150dc7792" config-ref="HTTP_Listener_config" path="/superhero" allowedMethods="POST"/>
+		<logger level="INFO" doc:name="Logger" doc:id="6882ee28-cdcf-4d0f-b030-ad538aeeeff0" message="#[payload]"/>
+		<vm:publish doc:name="Publish" doc:id="fc6947a1-5758-4c37-aa47-3d2b8700325b" config-ref="VM_Config_PubSub" queueName="superhero_queue"/>
+	</flow>
+	<flow name="SubscriberFlow" doc:id="c4aec43d-c12d-410b-9d3e-79699df8fd70" >
+		<vm:listener queueName="superhero_queue" doc:name="Listener" doc:id="571765f1-ca30-4192-bff7-8459dac16931" config-ref="VM_Config_PubSub"/>
+		<logger level="INFO" doc:name="Subscriber Logger" doc:id="adbb2756-c76b-4cc1-b992-f56b99c2157e" message="#[payload]"/>
+	</flow>
+</mule>

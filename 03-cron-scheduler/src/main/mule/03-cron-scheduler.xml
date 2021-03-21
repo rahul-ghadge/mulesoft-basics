@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="cron-schedulerFlow" doc:id="e77f20e5-3d8e-4b69-899c-00a1d7ab48a4" >
+		<scheduler doc:name="Scheduler" doc:id="428b7f0a-921b-48fa-8368-2d87673ee778">
+			<scheduling-strategy>
+				<fixed-frequency frequency="3" timeUnit="SECONDS" />
+			</scheduling-strategy>
+		</scheduler>
+		<logger level="INFO" doc:name="Logger" doc:id="692ca2ba-14cf-4b15-9e71-7e9511d6ba7c" message="*** Cron executed" />
+	</flow>
+</mule>

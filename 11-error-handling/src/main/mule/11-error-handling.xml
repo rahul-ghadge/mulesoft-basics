@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="29cbd2e9-24ed-49ba-a827-7843e0c9d0a5" >
+		<http:listener-connection host="0.0.0.0" port="8011" />
+	</http:listener-config>
+	<flow name="11-error-handlingFlow" doc:id="df00f80b-82f5-44d5-9ba4-677b35935412" >
+		<http:listener doc:name="Terminate Listener" doc:id="a81bfcd1-ec29-40e1-842b-df142f78dde5" config-ref="HTTP_Listener_config" path="/terminate"/>
+		<logger level="INFO" doc:name="Logger 1" doc:id="90bd9e30-2cad-4c25-aed0-5798eb2d7465" message="*** Before raising error ***"/>
+		<raise-error doc:name="Raise error" doc:id="c2077948-ed1e-4cf5-8e64-4a6c61ca964e" type="MULE:VALIDATION" description="Error occured while validation"/>
+		<logger level="INFO" doc:name="Logger 2" doc:id="4e9f6203-cb98-4fa9-b21e-c65433adc927" message="*** After raising error ***" />
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="9eea4867-9c26-462f-81e4-574b7ca4d767" >
+				<logger level="INFO" doc:name="Error Logger " doc:id="f018804f-fab3-4bab-821c-920d28517a18" message="*** Something bad happened ***"/>
+				<set-payload value='{"status": 500, "message": "something wrong happened with the validation"}' doc:name="Set Payload" doc:id="929f3e22-2185-4149-bfc2-5d46ff44a0a5" mimeType="application/json"/>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+	<flow name="11-error-handling-Flow" doc:id="ed50435d-a1b2-4c58-91fa-2a3851f3e3ba" >
+		<http:listener doc:name="Continue Listener" doc:id="bbef9b9b-571f-4719-b87c-70866f5ef29f" config-ref="HTTP_Listener_config" path="/continue" />
+		<logger level="INFO" doc:name="Logger 1" doc:id="0556402b-d760-4151-b7d8-020fcc705dbc" message="*** Before raising error ***" />
+		<raise-error doc:name="Raise error" doc:id="d7067c65-a4b5-40c5-abaa-d3d560148811" type="MULE:VALIDATION" description="Validation error" />
+		<logger level="INFO" doc:name="Logger 2" doc:id="19011418-93fa-4361-bdb5-9d21e2f49d13" message="*** After raising error ***" />
+		<logger level="INFO" doc:name="Logger" doc:id="0cf6cddc-bb5a-4557-ba5e-989ae862fe69" message="#[payload]"/>
+		<error-handler>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="26058630-f23d-493c-9820-fff098f1e28c" >
+				<logger level="INFO" doc:name="Logger" doc:id="ab737682-613e-4da9-a3a6-faab42a9fbd9" message="*** Error Logger ***"/>
+				<set-payload value='{"status": 500, "message": "something wrong happened with the validation"}' doc:name="Set Payload" doc:id="e39fa4e3-8817-4e56-85ea-567b5a1689bf" mimeType="application/json"/>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>

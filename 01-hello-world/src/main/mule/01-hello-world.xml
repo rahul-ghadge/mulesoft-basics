@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:java="http://www.mulesoft.org/schema/mule/java" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="56f47979-96f3-4320-869c-d900152db524" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="01-hello-worldFlow" doc:id="2993e444-c7e8-4b22-894c-fd7928319c6e" >
+		<http:listener doc:name="Listener" doc:id="cb572408-45bc-497d-a2e4-fe5ba9c475d3" config-ref="HTTP_Listener_config" path="/hello-world" allowedMethods="GET">
+			<http:response statusCode="#[200]" />
+		</http:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="ae320908-f146-4b4f-bec4-cd7019c8485e" message="*** Invoking the greeting API"/>
+		<set-payload value='#["Hello world"]' doc:name="Set Payload" doc:id="90f1c5ce-7d06-4f7d-ae06-8120ef295636" mimeType="application/json"/>
+		<logger level="INFO" doc:name="Logger" doc:id="1ee49371-1bd5-4626-b129-17139cc5db44" message="*** Invoked greeting API "/>
+	</flow>
+</mule>

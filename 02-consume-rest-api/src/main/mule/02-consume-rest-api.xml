@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="a03058db-43bc-4087-b0c8-8b818f05fb7f" >
+		<http:listener-connection host="0.0.0.0" port="8082" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="7beef7d1-7497-4881-b491-3afcd4f9f143" >
+		<http:request-connection host="spring-boot-h2-crud.herokuapp.com" />
+	</http:request-config>
+	<flow name="02-consume-rest-api-Flow" doc:id="55b264f0-b743-4dd1-8802-cb1331c7f5ca" >
+		<http:listener doc:name="Rest API Consumer" doc:id="f722dce9-e093-4e47-941c-e088803746a8" config-ref="HTTP_Listener_config" path="/employees" allowedMethods="GET"/>
+		<logger level="INFO" doc:name="Logger" doc:id="3ecc26fa-c33e-4f69-8273-34b8f6dc3dee" message="*** Invoking rest api from spring boot h2 CRUD"/>
+		<http:request method="GET" doc:name="REST API Request" doc:id="dde2bf98-48a2-4536-ad5a-ae42bed0b008" config-ref="HTTP_Request_configuration" path="/employees"/>
+		<logger level="INFO" doc:name="Logger" doc:id="0270bb41-4526-47e5-9032-9c81a5fbb988" message="*** INvoked REST API"/>
+	</flow>
+</mule>
