@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="0024d413-fd57-4413-bea0-d2908f8adee2" >
+		<http:listener-connection host="0.0.0.0" port="8014" />
+	</http:listener-config>
+	<email:smtp-config name="Email_SMTP" doc:name="Email SMTP" doc:id="0f8b3311-a874-4bc5-ad92-dc83975758cd" >
+		<email:smtp-connection host="smtp.pepipost.com" user="test-user" password="test-password" />
+	</email:smtp-config>
+	<flow name="14-email-senderFlow" doc:id="2a0984ea-ad90-4494-b92e-674303bab6cb" >
+		<http:listener doc:name="Listener" doc:id="2c96915c-92e6-454c-b09f-2997d559ec8b" config-ref="HTTP_Listener_config" path="/send-email"/>
+		<set-variable value="#[attributes.queryParams.body]" doc:name="Set Variable" doc:id="2fa4636e-2da6-4b74-9aee-2a30d333b41c" variableName="body"/>
+		<email:send doc:name="Send" doc:id="5b61c377-ea22-4113-accc-4157e544d1ed" config-ref="Email_SMTP" fromAddress="donotreply@mulesoft.com" subject="#[attributes.queryParams.subject]">
+			<email:to-addresses >
+				<email:to-address value="receivers-email@mail.com" />
+				<email:to-address value="#[attributes.queryParams.to]" />
+			</email:to-addresses>
+			<email:body>
+				<email:content ><![CDATA[#[%dw 2.0
+output application/text
+---
+{
+	payload: vars.body
+}]]]></email:content>
+			</email:body>
+		</email:send>
+		<logger level="INFO" doc:name="Logger" doc:id="d076c72c-07ff-459c-9c17-717ff302dbc9" message="*** Email sent successfully ***"/>
+	</flow>
+</mule>
