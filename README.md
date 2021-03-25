@@ -3,11 +3,12 @@ Basic demo application on Mulesoft Basics.
 
 
 ## How to import?
-	 1. Download/Clone mulesoft-basic repository from git
-         2. Open Anypoint Studio
-         3. File -> Import... -> Anypoint Studio -> Anypoint Studio project from File system -> Next
-         4. Select any one of sub-project (01-hello-world, 02-...) under `Project root`
-         5. Finish 
+
+1. Download/Clone mulesoft-basic repository from git
+2. Open Anypoint Studio
+3. File -> Import... -> Anypoint Studio -> Anypoint Studio project from File system -> Next
+4. Select any one of sub-project (01-hello-world, 02-...) under `Project root`
+5. Finish 
 
 
 
