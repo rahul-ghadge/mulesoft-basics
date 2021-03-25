@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="8fa9d8db-af64-4f20-ab7e-f254d327a25c" >
+		<http:listener-connection host="0.0.0.0" port="8008" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="91b99005-2c2b-40cb-b7e0-d5c4ebe80b01" >
+		<http:request-connection host="spring-boot-h2-crud.herokuapp.com" />
+	</http:request-config>
+	<flow name="08-for-each-iterationFlow" doc:id="e0fa70c5-e876-49c8-9565-ef94a4679a9d" >
+		<http:listener doc:name="/GET Listener on 8008" doc:id="8d51f90b-0830-48ae-808f-36b6a9634dd2" config-ref="HTTP_Listener_config" path="/"/>
+		<logger level="INFO" doc:name="Before API invocation" doc:id="aa6f39e9-3f56-4734-a3a1-b29525a2a2e5" message="*** Before invoking REST API ***" />
+		<http:request method="GET" doc:name="Invoke Superhero REST API" doc:id="8cc30422-05e6-4228-bf13-635d40490b75" config-ref="HTTP_Request_configuration" path="/super-heroes"/>
+		<logger level="INFO" doc:name="After API invocation" doc:id="6f7c5a66-1829-4578-8b62-47ec7f54d69d" message="*** Invoked superhero REST API ***" />
+		<ee:transform doc:name="String to Java" doc:id="86414b93-5ce2-4abc-95f5-36282ac3f642">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<foreach doc:name="For Each" doc:id="f9959c2b-f8ca-4550-8394-62af1fc76b1d" >
+			<logger level="INFO" doc:name="Log each object" doc:id="79c638e5-7e36-45fb-a722-4cc2f29640e2" message="#[payload]"/>
+		</foreach>
+		<ee:transform doc:name="Java to JSON" doc:id="fa684bdd-5847-42e6-8d83-b7dfd93ceddd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
