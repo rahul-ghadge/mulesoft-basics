@@ -6,7 +6,7 @@
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
 	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="56f47979-96f3-4320-869c-d900152db524" >
-		<http:listener-connection host="0.0.0.0" port="8081" />
+		<http:listener-connection host="0.0.0.0" port="8001" />
 	</http:listener-config>
 	<flow name="01-hello-worldFlow" doc:id="2993e444-c7e8-4b22-894c-fd7928319c6e" >
 		<http:listener doc:name="Listener" doc:id="cb572408-45bc-497d-a2e4-fe5ba9c475d3" config-ref="HTTP_Listener_config" path="/hello-world" allowedMethods="GET">
