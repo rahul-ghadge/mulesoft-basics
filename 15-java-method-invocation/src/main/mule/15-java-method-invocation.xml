@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:java="http://www.mulesoft.org/schema/mule/java"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="2561d7de-62b4-470f-b412-ccd0596cc044" >
+		<http:listener-connection host="0.0.0.0" port="8015" />
+	</http:listener-config>
+	<flow name="15-java-method-invocationFlow" doc:id="40a81f2f-36d4-42dd-be29-9180a03669f5" >
+		<http:listener doc:name="Listener" doc:id="77f0b027-6956-4785-adfd-8303359f94f8" config-ref="HTTP_Listener_config" path="/invoke"/>
+		<java:new constructor="SuperheroService()" doc:name="New" doc:id="c04df6fb-f121-4388-a05d-45d964399881" class="com.arya.demo.service.SuperheroService" target="superheroService"/>
+		<java:invoke doc:name="Invoke" doc:id="4e5dc904-7e2e-4dcb-a9d0-9872826d5de8" instance="#[vars.superheroService]" class="com.arya.demo.service.SuperheroService" method="getSuperheroes()"/>
+		<logger level="INFO" doc:name="Logger" doc:id="cce754b6-2980-44a8-9898-cbfb8fb0e70f" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="67f33d25-e3f3-484f-9ff3-a356e669e9f0" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="15-java-static-method-invocation-Flow" doc:id="9dc1d841-8d68-45e1-a9ac-fdedb6da1ff5" >
+		<http:listener doc:name="Listener" doc:id="ee88c4c4-fb55-4b0f-a81a-4532398a8f4f" config-ref="HTTP_Listener_config" path="/invoke-static" />
+		<java:invoke-static method="getSuperheroByName(String)" doc:name="Invoke static" doc:id="70e881b3-b38d-4e90-ac15-07d661685525" class="com.arya.demo.service.SuperheroService">
+			<java:args ><![CDATA[#[%dw 2.0
+output application/java
+---
+{
+	name: attributes.queryParams.name as String
+}]]]></java:args>
+		</java:invoke-static>
+		<logger level="INFO" doc:name="Logger" doc:id="d35988c9-63bf-4432-91e5-dc7b28aeea92" message="#[payload]" />
+		<ee:transform doc:name="Transform Message" doc:id="3edacacc-f14b-45fd-94b2-09f60ad58095" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
